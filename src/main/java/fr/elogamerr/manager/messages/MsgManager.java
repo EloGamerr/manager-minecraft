@@ -15,6 +15,12 @@ import java.util.Map.Entry;
 
 public class MsgManager
 {
+    private String infoColor;
+    private String errColor;
+    private String warningColor;
+    private String cmdColor;
+    private String scTitleColor;
+    private String scLineColor;
 
     String pluginName;
     LinkedHashMap<String, String> helpNameAndDesc = new LinkedHashMap<>();
@@ -27,7 +33,7 @@ public class MsgManager
 
     public MsgManager(String pluginName)
     {
-        this.pluginName = pluginName;
+        this(pluginName, null);
     }
 
     public String getPluginName() {
@@ -71,26 +77,26 @@ public class MsgManager
 
     private String parseTagsSc(String string)
     {
-        return string.replace("<err>", MessagesStyles.ERROR.getStyle())
-                .replace("<!>", MessagesStyles.IMPORTANT_WORD.getStyle())
-                .replace("<cmd>", MessagesStyles.COMMAND.getStyle())
-                .replace("<info>", MessagesStyles.SCOREBOARD_LINE.getStyle())
-                .replace("$e$", MessagesStyles.ERROR.getStyle())
-                .replace("$!$", MessagesStyles.IMPORTANT_WORD.getStyle())
-                .replace("$c$", MessagesStyles.COMMAND.getStyle())
-                .replace("$i$", MessagesStyles.SCOREBOARD_LINE.getStyle());
+        return string.replace("<err>", MessagesStyles.ERROR.getStyle(this))
+                .replace("<!>", MessagesStyles.IMPORTANT_WORD.getStyle(this))
+                .replace("<cmd>", MessagesStyles.COMMAND.getStyle(this))
+                .replace("<info>", MessagesStyles.SCOREBOARD_LINE.getStyle(this))
+                .replace("$e$", MessagesStyles.ERROR.getStyle(this))
+                .replace("$!$", MessagesStyles.IMPORTANT_WORD.getStyle(this))
+                .replace("$c$", MessagesStyles.COMMAND.getStyle(this))
+                .replace("$i$", MessagesStyles.SCOREBOARD_LINE.getStyle(this));
     }
 
     private String parseTags(String string)
     {
-        return string.replace("<err>", MessagesStyles.ERROR.getStyle())
-                .replace("<!>", MessagesStyles.IMPORTANT_WORD.getStyle())
-                .replace("<cmd>", MessagesStyles.COMMAND.getStyle())
-                .replace("<info>", MessagesStyles.INFO.getStyle())
-                .replace("$e$", MessagesStyles.ERROR.getStyle())
-                .replace("$!$", MessagesStyles.IMPORTANT_WORD.getStyle())
-                .replace("$c$", MessagesStyles.COMMAND.getStyle())
-                .replace("$i$", MessagesStyles.INFO.getStyle());
+        return string.replace("<err>", MessagesStyles.ERROR.getStyle(this))
+                .replace("<!>", MessagesStyles.IMPORTANT_WORD.getStyle(this))
+                .replace("<cmd>", MessagesStyles.COMMAND.getStyle(this))
+                .replace("<info>", MessagesStyles.INFO.getStyle(this))
+                .replace("$e$", MessagesStyles.ERROR.getStyle(this))
+                .replace("$!$", MessagesStyles.IMPORTANT_WORD.getStyle(this))
+                .replace("$c$", MessagesStyles.COMMAND.getStyle(this))
+                .replace("$i$", MessagesStyles.INFO.getStyle(this));
     }
 
     private String parseColor(String string)
@@ -112,7 +118,7 @@ public class MsgManager
 
     private String format(String msg, String pluginName, String messageStyle)
     {
-        return this.formatWithoutPluginName(ChatColor.DARK_AQUA+"["+ ChatColor.BOLD+pluginName+ ChatColor.DARK_AQUA+"] "+messageStyle+msg, messageStyle);
+        return this.formatWithoutPluginName(pluginName + " " + messageStyle + msg, messageStyle);
     }
 
     public String formatWithoutPluginName(String msg, String messageStyle)
@@ -122,22 +128,22 @@ public class MsgManager
 
     public String info(String prefix, String msg)
     {
-        return this.format(msg, prefix,  MessagesStyles.INFO.getStyle());
+        return this.format(msg, prefix,  MessagesStyles.INFO.getStyle(this));
     }
 
     public String err(String prefix, String msg)
     {
-        return this.format(msg, prefix,  MessagesStyles.ERROR.getStyle());
+        return this.format(msg, prefix,  MessagesStyles.ERROR.getStyle(this));
     }
 
     public String info(String msg)
     {
-        return this.format(msg, this.pluginName, MessagesStyles.INFO.getStyle());
+        return this.format(msg, this.pluginName, MessagesStyles.INFO.getStyle(this));
     }
 
     public String err(String msg)
     {
-        return this.format(msg, this.pluginName, MessagesStyles.ERROR.getStyle());
+        return this.format(msg, this.pluginName, MessagesStyles.ERROR.getStyle(this));
     }
 
     private String getFormattedRemainingTime(long time, int type, boolean days, boolean hours, boolean minutes, boolean seconds) {
@@ -226,7 +232,7 @@ public class MsgManager
                 desc = this.parseMsg(desc, "", false);
 
                 if(perm == null || perm.equalsIgnoreCase("") || sender.hasPermission(perm))
-                    cmds.add(MessagesStyles.COMMAND.getStyle()+cmd + ChatColor.RED+" - " + MessagesStyles.INFO.getStyle()+desc);
+                    cmds.add(MessagesStyles.COMMAND.getStyle(this)+cmd + ChatColor.RED+" - " + MessagesStyles.INFO.getStyle(this)+desc);
             }
             if(!cmds.isEmpty())
             {
@@ -438,14 +444,14 @@ public class MsgManager
 
     public String scTitle(String title)
     {
-        title = MessagesStyles.SCOREBOARD_TITLE.getStyle()+title;
+        title = MessagesStyles.SCOREBOARD_TITLE.getStyle(this)+title;
 
         return this.parse(title, true);
     }
 
     public String scLine(String line)
     {
-        line = MessagesStyles.SCOREBOARD_LINE.getStyle()+line;
+        line = MessagesStyles.SCOREBOARD_LINE.getStyle(this)+line;
 
         return this.parse(line, true);
     }
@@ -465,5 +471,57 @@ public class MsgManager
         {
             this.helpNameAndDesc.putAll(helpNameAndDesc);
         }
+    }
+
+    public void setInfoColor(String infoColor) {
+        this.infoColor = infoColor;
+    }
+
+    public void setErrColor(String errColor) {
+        this.errColor = errColor;
+    }
+
+    public void setWarningColor(String warningColor) {
+        this.warningColor = warningColor;
+    }
+
+    public void setCmdColor(String cmdColor) {
+        this.cmdColor = cmdColor;
+    }
+
+    public void setScTitleColor(String scTitleColor) {
+        this.scTitleColor = scTitleColor;
+    }
+
+    public void setScLineColor(String scLineColor) {
+        this.scLineColor = scLineColor;
+    }
+
+    public String getInfoColor() {
+        return infoColor == null ? MessagesStyles.INFO.getDefaultStyle() : infoColor;
+    }
+
+    public String getErrColor() {
+        return errColor == null ? MessagesStyles.ERROR.getDefaultStyle() : errColor;
+    }
+
+    public String getWarningColor() {
+        return warningColor == null ? MessagesStyles.IMPORTANT_WORD.getDefaultStyle() : warningColor;
+    }
+
+    public String getCmdColor() {
+        return cmdColor == null ? MessagesStyles.COMMAND.getDefaultStyle() : cmdColor;
+    }
+
+    public String getScTitleColor() {
+        return scTitleColor == null ? MessagesStyles.SCOREBOARD_TITLE.getDefaultStyle() : scTitleColor;
+    }
+
+    public String getScLineColor() {
+        return scLineColor == null ? MessagesStyles.SCOREBOARD_LINE.getDefaultStyle() : scLineColor;
+    }
+
+    public void setPluginName(String pluginName) {
+        this.pluginName = pluginName;
     }
 }

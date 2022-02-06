@@ -29,13 +29,15 @@ public abstract class StaticFileObject extends FileObject
         return this.getClass().getSimpleName().toLowerCase();
     }
 
-    protected void tryLoad() {
+    protected boolean tryLoad() {
         String fileName = this.getFileName().endsWith(".json") ? this.getFileName() : this.getFileName()+".json";
         File file = new File(this.fileManager.getJavaPlugin().getDataFolder(), fileName);
 
-        if(this.lastModified == file.lastModified() && file.exists()) return;
+        if(this.lastModified == file.lastModified() && file.exists()) return false;
 
         this.load();
+
+        return true;
     }
 
     @Override

@@ -28,7 +28,7 @@ class SCommand
 		this.name = name;
 		this.subCommands = subCommands;
 		this.defaultSubCommand = defaultSubCommand;
-		this.msg = new MsgManager(msg.getPluginName(), msg.getHelpNameAndDesc());
+		this.msg = msg;
 		this.helpEnabled = helpEnabled;
 		this.fileManager = fileManager;
 
