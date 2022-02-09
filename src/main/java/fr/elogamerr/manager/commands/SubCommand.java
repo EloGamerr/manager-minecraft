@@ -183,49 +183,103 @@ public abstract class SubCommand
 		return player;
 	}
 
-	protected int argAsInt(int index, boolean notify, int min, int max) throws ArgTypeException
-	{
-		String arg = this.argAsString(index);
-
-		try {
-			int number = Integer.parseInt(arg);
-
-			if(number >= min && number <= max) {
-				return number;
-			}
-			else {
-				if(notify)
-					this.err("L'argument $!$"+arg+"$e$doit être un entier compris entre <!>"+min+" <err>et <!>"+max);
-
-				throw new ArgTypeException(index, arg);
-			}
-		}
-		catch(NumberFormatException ex) {
-			if(notify)
-				this.err("L'argument $!$"+arg+"$e$doit être un entier compris entre <!>"+min+" <err>et <!>"+max);
-
-			throw new ArgTypeException(index, arg);
-		}
+	protected int argAsInt(int index, boolean notify) throws ArgTypeException {
+		return this.argAsInt(index, notify, Integer.MIN_VALUE);
 	}
 
-	protected double argAsDouble(int index, boolean notify, double min, double max) throws ArgTypeException
-	{
+	protected int argAsInt(int index, boolean notify, int min) throws ArgTypeException {
+		return this.argAsInt(index, notify, min, Integer.MAX_VALUE);
+	}
+
+	protected int argAsInt(int index, boolean notify, int min, int max) throws ArgTypeException {
+		return this.argAsNumber(index, notify, Integer.class, min, max);
+	}
+
+	protected double argAsDouble(int index, boolean notify) throws ArgTypeException {
+		return this.argAsDouble(index, notify, Double.NEGATIVE_INFINITY);
+	}
+
+	protected double argAsDouble(int index, boolean notify, double min) throws ArgTypeException {
+		return this.argAsDouble(index, notify, min, Double.POSITIVE_INFINITY);
+	}
+
+	protected double argAsDouble(int index, boolean notify, double min, double max) throws ArgTypeException {
+		return this.argAsNumber(index, notify, Double.class, min, max);
+	}
+
+	protected byte argAsByte(int index, boolean notify) throws ArgTypeException {
+		return this.argAsByte(index, notify, Byte.MIN_VALUE);
+	}
+
+	protected byte argAsByte(int index, boolean notify, byte min) throws ArgTypeException {
+		return this.argAsByte(index, notify, min, Byte.MAX_VALUE);
+	}
+
+	protected byte argAsByte(int index, boolean notify, byte min, byte max) throws ArgTypeException {
+		return this.argAsNumber(index, notify, Byte.class, min, max);
+	}
+
+	protected float argAsFloat(int index, boolean notify) throws ArgTypeException {
+		return this.argAsFloat(index, notify, Float.NEGATIVE_INFINITY);
+	}
+
+	protected float argAsFloat(int index, boolean notify, float min) throws ArgTypeException {
+		return this.argAsFloat(index, notify, min, Float.POSITIVE_INFINITY);
+	}
+
+	protected float argAsFloat(int index, boolean notify, float min, float max) throws ArgTypeException {
+		return this.argAsNumber(index, notify, Float.class, min, max);
+	}
+
+	protected short argAsShort(int index, boolean notify) throws ArgTypeException {
+		return this.argAsShort(index, notify, Short.MIN_VALUE);
+	}
+
+	protected short argAsShort(int index, boolean notify, short min) throws ArgTypeException {
+		return this.argAsShort(index, notify, min, Short.MAX_VALUE);
+	}
+
+	protected short argAsShort(int index, boolean notify, short min, short max) throws ArgTypeException {
+		return this.argAsNumber(index, notify, Short.class, min, max);
+	}
+
+	protected long argAsLong(int index, boolean notify) throws ArgTypeException {
+		return this.argAsLong(index, notify, Long.MIN_VALUE);
+	}
+
+	protected long argAsLong(int index, boolean notify, long min) throws ArgTypeException {
+		return this.argAsLong(index, notify, min, Long.MAX_VALUE);
+	}
+
+	protected long argAsLong(int index, boolean notify, long min, long max) throws ArgTypeException {
+		return this.argAsNumber(index, notify, Long.class, min, max);
+	}
+
+	private <T extends Number> T argAsNumber(int index, boolean notify, Class<T> clazz, T min, T max) throws ArgTypeException {
 		String arg = this.argAsString(index);
 
-		try {
-			double number = Double.parseDouble(arg);
+		Comparable<T> value;
 
-			if(number >= min && number <= max) {
-				return number;
-			}
-			else {
-				if(notify)
-					this.err("L'argument $!$"+arg+"$e$doit être un nombre compris entre <!>"+min+" <err>et <!>"+max);
-
-				throw new ArgTypeException(index, arg);
-			}
+		if (clazz == Byte.class) {
+			value = (Comparable<T>) Byte.valueOf(arg);
+		} else if (clazz == Double.class) {
+			value = (Comparable<T>) Double.valueOf(arg);
+		} else if (clazz == Float.class) {
+			value = (Comparable<T>) Float.valueOf(arg);
+		} else if (clazz == Integer.class) {
+			value = (Comparable<T>) Integer.valueOf(arg);
+		} else if (clazz == Long.class) {
+			value = (Comparable<T>) Long.valueOf(arg);
+		} else if (clazz == Short.class) {
+			value = (Comparable<T>) Short.valueOf(arg);
+		} else {
+			throw new RuntimeException();
 		}
-		catch(NumberFormatException ex) {
+
+		if(value.compareTo(min) >= 0 && value.compareTo(max) <= 0) {
+			return (T) value;
+		}
+		else {
 			if(notify)
 				this.err("L'argument $!$"+arg+"$e$doit être un nombre compris entre <!>"+min+" <err>et <!>"+max);
 
@@ -241,9 +295,7 @@ public abstract class SubCommand
 
 		if(arg.equalsIgnoreCase("true") || arg.equalsIgnoreCase("t") || arg.equalsIgnoreCase("vrai") || arg.equalsIgnoreCase("v") || arg.equalsIgnoreCase("oui") || arg.equalsIgnoreCase("yes") || arg.equalsIgnoreCase("y") || arg.equalsIgnoreCase("+")) {
 			bool = true;
-		}
-
-		if(arg.equalsIgnoreCase("false") || arg.equalsIgnoreCase("f") || arg.equalsIgnoreCase("faux") || arg.equalsIgnoreCase("non") || arg.equalsIgnoreCase("no") || arg.equalsIgnoreCase("n") || arg.equalsIgnoreCase("-")) {
+		} else if(arg.equalsIgnoreCase("false") || arg.equalsIgnoreCase("f") || arg.equalsIgnoreCase("faux") || arg.equalsIgnoreCase("non") || arg.equalsIgnoreCase("no") || arg.equalsIgnoreCase("n") || arg.equalsIgnoreCase("-")) {
 			bool = false;
 		}
 
