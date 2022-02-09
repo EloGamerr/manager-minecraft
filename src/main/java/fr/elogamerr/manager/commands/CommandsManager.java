@@ -1,6 +1,5 @@
 package fr.elogamerr.manager.commands;
 
-import fr.elogamerr.manager.files.FileManager;
 import fr.elogamerr.manager.messages.MsgManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.PluginCommandYamlParser;
@@ -16,15 +15,12 @@ import java.util.zip.ZipInputStream;
 
 public class CommandsManager
 {
-	public List<SCommand> commands = new ArrayList<SCommand>();
+	private List<SCommand> commands = new ArrayList<>();
 
+	/**
+	 * Package of commands : plugin/commands/[command]/[subcommand]
+	 */
 	public CommandsManager(JavaPlugin plugin, String commandsPackage, MsgManager msg, boolean helpEnabled)
-	{
-		this(plugin, commandsPackage, msg, helpEnabled, null);
-	}
-
-	//Package of commands : plugin/commands/[command]/[subcommand]
-	public CommandsManager(JavaPlugin plugin, String commandsPackage, MsgManager msg, boolean helpEnabled, FileManager fileManager)
 	{
 		try
 		{
@@ -51,24 +47,24 @@ public class CommandsManager
 						{
 							SubCommand subCommand = (SubCommand)object;
 
-							if(subCommand.commandName == null)
+							if(subCommand.getCommandName() == null)
 							{
 								String[] splitPackage = packageFile.split("/");
 								if(splitPackage.length >= 2)
 								{
-									subCommand.commandName = splitPackage[splitPackage.length-2];
+									subCommand.setCommandName(splitPackage[splitPackage.length-2]);;
 								}
 							}
 
-							if(subCommand.commandName != null)
+							if(subCommand.getCommandName() != null)
 							{
-								List<SubCommand> subCmd = subCommands.get(subCommand.commandName);
+								List<SubCommand> subCmd = subCommands.get(subCommand.getCommandName());
 								if(subCmd == null)
 								{
 									subCmd = new ArrayList<>();
 								}
 								subCmd.add(subCommand);
-								subCommands.put(subCommand.commandName, subCmd);
+								subCommands.put(subCommand.getCommandName(), subCmd);
 							}
 						}
 					}
@@ -76,7 +72,7 @@ public class CommandsManager
 			}
 
 			List<Command> commands = PluginCommandYamlParser.parse(plugin);
-			List<SCommand> scommands = new ArrayList<SCommand>();
+			List<SCommand> scommands = new ArrayList<>();
 			Iterator<SCommand> iterator = this.commands.iterator();
 			for(Command command : commands)
 			{
@@ -84,7 +80,7 @@ public class CommandsManager
 				{
 					SCommand scommand = iterator.next();
 
-					if (scommand.name.equalsIgnoreCase(command.getName()))
+					if (scommand.getName().equalsIgnoreCase(command.getName()))
 					{
 						iterator.remove(); //We can't have two identical commands
 					}
@@ -96,52 +92,52 @@ public class CommandsManager
 					SubCommand defaultSubCommand = null;
 					for(SubCommand subCmd : subCmds)
 					{
-						if(subCmd.isDefaultCmd)
+						if(subCmd.isDefaultCmd())
 						{
 							defaultSubCommand = subCmd;
 						}
 					}
 
-					SCommand scmd = new SCommand(commandsExecutor, command.getName(), subCmds.toArray(new SubCommand[]{}), defaultSubCommand, msg, helpEnabled, fileManager);
+					SCommand scmd = new SCommand(commandsExecutor, command.getName(), subCmds.toArray(new SubCommand[]{}), defaultSubCommand, msg, helpEnabled);
 					scommands.add(scmd);
 
 					LinkedHashMap<String, String> helpNameAndDesc = new LinkedHashMap<String, String>();
-					plugin.getCommand(scmd.name).setExecutor(commandsExecutor);
+					plugin.getCommand(scmd.getName()).setExecutor(commandsExecutor);
 
-					if (scmd.subCommands == null) scmd.subCommands = new SubCommand[]{};
+					if (scmd.getSubCommands() == null) scmd.setSubCommands(new SubCommand[]{});
 
-					for (SubCommand subCommand : scmd.subCommands) {
-						subCommand.scommand = scmd;
-						if (scmd.helpEnabled) {
-							if (!subCommand.aliases.isEmpty() && subCommand.setInHelp && (scmd.defaultSubCommand == null || !scmd.defaultSubCommand.equals(subCommand))) {
+					for (SubCommand subCommand : scmd.getSubCommands()) {
+						subCommand.setScommand(scmd);
+						if (scmd.isHelpEnabled()) {
+							if (!subCommand.getAliases().isEmpty() && subCommand.isDisplayInHelp() && (scmd.getDefaultSubCommand() == null || !scmd.getDefaultSubCommand().equals(subCommand))) {
 								String cmd = subCommand.getUseageTemplate();
 
-								if (subCommand.descHelp != null) {
-									helpNameAndDesc.put(cmd, subCommand.descHelp + (subCommand.senderMustBeOp ? ";op" : (subCommand.permission == null ? "" : ";" + subCommand.permission)));
+								if (subCommand.getHelpDescription() != null) {
+									helpNameAndDesc.put(cmd, subCommand.getHelpDescription() + (subCommand.isSenderMustBeOp() ? ";op" : (subCommand.getPermission() == null ? "" : ";" + subCommand.getPermission())));
 								} else {
-									helpNameAndDesc.put(cmd, "Aucune description" + (subCommand.senderMustBeOp ? ";op" : (subCommand.permission == null ? "" : ";" + subCommand.permission)));
+									helpNameAndDesc.put(cmd, "Aucune description" + (subCommand.isSenderMustBeOp() ? ";op" : (subCommand.getPermission() == null ? "" : ";" + subCommand.getPermission())));
 								}
 							}
 						}
 					}
 
-					if (scmd.defaultSubCommand != null) {
-						scmd.defaultSubCommand.scommand = scmd;
+					if (scmd.getDefaultSubCommand() != null) {
+						scmd.getDefaultSubCommand().setScommand(scmd);
 
-						if (scmd.helpEnabled) {
-							SubCommand subCommand = scmd.defaultSubCommand;
-							if (subCommand.setInHelp) {
+						if (scmd.isHelpEnabled()) {
+							SubCommand subCommand = scmd.getDefaultSubCommand();
+							if (subCommand.isDisplayInHelp()) {
 								String cmd = subCommand.getUseageTemplate();
-								if (subCommand.descHelp != null) {
-									helpNameAndDesc.put(cmd, subCommand.descHelp + (subCommand.senderMustBeOp ? ";op" : (subCommand.permission == null ? "" : ";" + subCommand.permission)));
+								if (subCommand.getHelpDescription() != null) {
+									helpNameAndDesc.put(cmd, subCommand.getHelpDescription() + (subCommand.isSenderMustBeOp() ? ";op" : (subCommand.getPermission() == null ? "" : ";" + subCommand.getPermission())));
 								} else {
-									helpNameAndDesc.put(cmd, "Aucune description" + (subCommand.senderMustBeOp ? ";op" : (subCommand.permission == null ? "" : ";" + subCommand.permission)));
+									helpNameAndDesc.put(cmd, "Aucune description" + (subCommand.isSenderMustBeOp() ? ";op" : (subCommand.getPermission() == null ? "" : ";" + subCommand.getPermission())));
 								}
 							}
 						}
 					}
-					if (scmd.helpEnabled) {
-						scmd.msg.putAllHelp(helpNameAndDesc);
+					if (scmd.isHelpEnabled()) {
+						scmd.getMsg().putAllHelp(helpNameAndDesc);
 					}
 				}
 			}
@@ -154,7 +150,7 @@ public class CommandsManager
 		}
 	}
 
-	public static ArrayList<String> getPackageContentJar(JavaPlugin plugin, String commandsPackage) throws IOException
+	public ArrayList<String> getPackageContentJar(JavaPlugin plugin, String commandsPackage) throws IOException
 	{
 		ArrayList<String> content = new ArrayList<String>();
 		String commandPackagePath = commandsPackage;
@@ -174,5 +170,9 @@ public class CommandsManager
 			}
 		}
 		return content;
+	}
+
+	public List<SCommand> getCommands() {
+		return commands;
 	}
 }

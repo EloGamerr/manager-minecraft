@@ -2,14 +2,14 @@ package fr.elogamerr.manager.commands;
 
 class HelpCommand extends SubCommand
 {
-    public HelpCommand()
-    {
-        this.aliases.add("help");
-        this.setInHelp = false;
+    @Override
+    protected void init() {
+        this.addAlias("help");
+        this.setDisplayInHelp(false);
     }
 
     public void perform()
     {
-        this.scommand.msg.help(this.sender);
+        this.getMsgManager().help(this.getSender());
     }
 }

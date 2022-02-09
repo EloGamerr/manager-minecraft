@@ -1,6 +1,5 @@
 package fr.elogamerr.manager.commands;
 
-import fr.elogamerr.manager.files.FileManager;
 import fr.elogamerr.manager.messages.MsgManager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -12,17 +11,15 @@ import java.util.List;
 
 class SCommand
 {
-	protected CommandsExecutor commandsExecutor;
-	protected SubCommand[] subCommands;
-	protected SubCommand defaultSubCommand;
-	protected MsgManager msg;
-	protected String name;
-	protected boolean helpEnabled;
-	protected SubCommand helpSubCommand;
-	protected SubCommand reloadSubCommand;
-	protected FileManager fileManager;
+	private CommandsExecutor commandsExecutor;
+	private SubCommand[] subCommands;
+	private SubCommand defaultSubCommand;
+	private MsgManager msg;
+	private String name;
+	private boolean helpEnabled;
+	private SubCommand helpSubCommand;
 
-	public SCommand(CommandsExecutor commandsExecutor, String name, SubCommand[] subCommands, SubCommand defaultSubCommand, MsgManager msg, boolean helpEnabled, FileManager fileManager)
+	public SCommand(CommandsExecutor commandsExecutor, String name, SubCommand[] subCommands, SubCommand defaultSubCommand, MsgManager msg, boolean helpEnabled)
 	{
 		this.commandsExecutor = commandsExecutor;
 		this.name = name;
@@ -30,17 +27,11 @@ class SCommand
 		this.defaultSubCommand = defaultSubCommand;
 		this.msg = msg;
 		this.helpEnabled = helpEnabled;
-		this.fileManager = fileManager;
 
 		if(this.helpEnabled)
 		{
 			this.helpSubCommand = new HelpCommand();
-			this.helpSubCommand.scommand = this;
-		}
-		if(this.fileManager != null)
-		{
-			this.reloadSubCommand = new ReloadCommand();
-			this.reloadSubCommand.scommand = this;
+			this.helpSubCommand.setScommand(this);
 		}
 	}
 	
@@ -50,11 +41,11 @@ class SCommand
 		{
 			for(SubCommand subCommand : this.subCommands)
 			{
-				for(String alias : subCommand.aliases)
+				for(String alias : subCommand.getAliases())
 				{
 					if(alias.equalsIgnoreCase(args[0]))
 					{
-						List<String> argsList = new ArrayList<String>(Arrays.asList(args));
+						List<String> argsList = new ArrayList<>(Arrays.asList(args));
 						argsList.remove(0);
 						subCommand.execute(sender, cmd, msg, argsList, alias);
 						return;
@@ -63,26 +54,13 @@ class SCommand
 			}
 			if(this.helpSubCommand != null)
 			{
-				for(String alias : this.helpSubCommand.aliases)
+				for(String alias : this.helpSubCommand.getAliases())
 				{
 					if(alias.equalsIgnoreCase(args[0]))
 					{
-						List<String> argsList = new ArrayList<String>(Arrays.asList(args));
+						List<String> argsList = new ArrayList<>(Arrays.asList(args));
 						argsList.remove(0);
 						this.helpSubCommand.execute(sender, cmd, msg, argsList, alias);
-						return;
-					}
-				}
-			}
-			if(this.reloadSubCommand != null)
-			{
-				for(String alias : this.reloadSubCommand.aliases)
-				{
-					if(alias.equalsIgnoreCase(args[0]))
-					{
-						List<String> argsList = new ArrayList<String>(Arrays.asList(args));
-						argsList.remove(0);
-						this.reloadSubCommand.execute(sender, cmd, msg, argsList, alias);
 						return;
 					}
 				}
@@ -108,7 +86,7 @@ class SCommand
 		{
 			for(SubCommand subCommand : this.subCommands)
 			{
-				for(String alias : subCommand.aliases)
+				for(String alias : subCommand.getAliases())
 				{
 					if(alias.equalsIgnoreCase(args[0]))
 					{
@@ -134,8 +112,8 @@ class SCommand
 		
 		for(SubCommand subCommand : this.subCommands)
 		{
-			if(!subCommand.aliases.isEmpty())
-			message.append(subCommand.aliases.get(0)).append(",");
+			if(!subCommand.getAliases().isEmpty())
+				message.append(subCommand.getAliases().get(0)).append(",");
 		}
 
 		message = new StringBuilder(message.substring(0, message.length() - 1));
@@ -143,5 +121,33 @@ class SCommand
 		message.append(this.defaultSubCommand != null ? "]" : ">");
 		
 		return message.toString();
+	}
+
+	public CommandsExecutor getCommandsExecutor() {
+		return commandsExecutor;
+	}
+
+	public SubCommand[] getSubCommands() {
+		return subCommands;
+	}
+
+	public SubCommand getDefaultSubCommand() {
+		return defaultSubCommand;
+	}
+
+	public MsgManager getMsg() {
+		return msg;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public boolean isHelpEnabled() {
+		return helpEnabled;
+	}
+
+	public void setSubCommands(SubCommand[] subCommands) {
+		this.subCommands = subCommands;
 	}
 }

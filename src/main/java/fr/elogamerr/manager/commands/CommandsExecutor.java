@@ -24,9 +24,9 @@ class CommandsExecutor implements CommandExecutor, TabCompleter
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String msg, String[] args)
 	{
-		for(SCommand scmd : this.manager.commands)
+		for(SCommand scmd : this.manager.getCommands())
 		{
-			if(scmd.name.equalsIgnoreCase(cmd.getName()))
+			if(scmd.getName().equalsIgnoreCase(cmd.getName()))
 			{
 				scmd.execute(sender, cmd, msg, args);
 			}
@@ -36,9 +36,9 @@ class CommandsExecutor implements CommandExecutor, TabCompleter
 
 	public List<String> onTabComplete(final CommandSender sender, final Command cmd, final String msg, final String[] args)
 	{
-		for(SCommand scmd : this.manager.commands)
+		for(SCommand scmd : this.manager.getCommands())
 		{
-			if(scmd.name.equalsIgnoreCase(cmd.getName()))
+			if(scmd.getName().equalsIgnoreCase(cmd.getName()))
 			{
 				return scmd.completeTab(sender, cmd, msg, args);
 			}
