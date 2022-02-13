@@ -2,9 +2,13 @@ package fr.elogamerr.manager.files;
 
 public abstract class FileEntity
 {
-    private transient final SeveralFilesObject severalFilesObject;
+    private transient SeveralFilesObject severalFilesObject;
 
     public FileEntity(SeveralFilesObject severalFilesObject) {
+        this.severalFilesObject = severalFilesObject;
+    }
+
+    void setSeveralFilesObject(SeveralFilesObject severalFilesObject) {
         this.severalFilesObject = severalFilesObject;
     }
 

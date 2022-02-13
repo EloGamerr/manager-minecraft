@@ -248,6 +248,7 @@ public abstract class SeveralFilesObject<T extends FileEntity> extends FileObjec
 
                     if(object != null)
                     {
+                        object.setSeveralFilesObject(this);
                         this.getIdToFileEntities().put(object.getId().toLowerCase(), object);
                         this.getFileEntities().add(object);
                     }
