@@ -2,7 +2,7 @@ package fr.elogamerr.manager.commands;
 
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
-import fr.elogamerr.manager.commands.enums.OptionnalArgValue;
+import fr.elogamerr.manager.commands.enums.OptionnalArgName;
 import fr.elogamerr.manager.commands.exceptions.ArgTypeException;
 import fr.elogamerr.manager.messages.MsgManager;
 import org.bukkit.Bukkit;
@@ -113,6 +113,10 @@ public abstract class SubCommand
 	protected abstract void init();
 
 	protected abstract void perform();
+
+	protected String getDefaultOptionalArg(String argName) {
+		return null;
+	}
 
 	protected void sendToBungee()
 	{
@@ -413,7 +417,7 @@ public abstract class SubCommand
 			}
 			else
 			{
-				value = "="+this.getOptionnalArg(value);
+				value = "="+this.getOptionnalArg(s.getKey(), value);
 			}
 
 			message.append(" [").append(s.getKey()).append(value).append("]");
@@ -434,11 +438,15 @@ public abstract class SubCommand
 			this.playerName = this.player.getName();
 		}
 
-		this.setArgs();
-
 		if(!this.initCustomVariables()) return;
 
+		this.setArgs();
+
 		this.perform();
+	}
+
+	int getRequiredArgsAmount() {
+		return requiredArgs.size();
 	}
 
 	// Private
@@ -489,23 +497,28 @@ public abstract class SubCommand
 				i++;
 				if(i > miss)
 				{
-					this.args.add(this.getOptionnalArg(arg.getValue()));
+					this.args.add(this.getOptionnalArg(arg.getKey(), null));
 				}
 			}
 		}
 	}
 
-	private String getOptionnalArg(String value)
+	private String getOptionnalArg(String argName, String value)
 	{
-		if(value == null) return "";
+		String defaultArg = getDefaultOptionalArg(argName);
 
-		if(this.sender == null) return value;
+		if (defaultArg != null) {
+			return defaultArg;
+		}
 
-		if(value.equalsIgnoreCase(OptionnalArgValue.YOU.getValue()))
+		if(this.sender != null && argName.equalsIgnoreCase(OptionnalArgName.PLAYER.getArgName()))
 		{
 			return this.sender.getName();
 		}
-		
+
+		if(value == null)
+			value = "";
+
 		return value;
 	}
 

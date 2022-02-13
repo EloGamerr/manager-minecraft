@@ -5,9 +5,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 class SCommand
 {
@@ -39,19 +37,29 @@ class SCommand
 	{
 		if(args.length != 0)
 		{
+			Map<Integer, SubCommand> requiredArgsAmountToSubCommand = new HashMap<>();
 			for(SubCommand subCommand : this.subCommands)
 			{
 				for(String alias : subCommand.getAliases())
 				{
 					if(alias.equalsIgnoreCase(args[0]))
 					{
-						List<String> argsList = new ArrayList<>(Arrays.asList(args));
-						argsList.remove(0);
-						subCommand.execute(sender, cmd, msg, argsList, alias);
-						return;
+						requiredArgsAmountToSubCommand.put(subCommand.getRequiredArgsAmount(), subCommand);
 					}
 				}
 			}
+			SubCommand subCommand = requiredArgsAmountToSubCommand.get(args.length - 1);
+			if (subCommand == null && !requiredArgsAmountToSubCommand.isEmpty()){
+				subCommand = requiredArgsAmountToSubCommand.values().iterator().next();
+			}
+
+			if (subCommand != null) {
+				List<String> argsList = new ArrayList<>(Arrays.asList(args));
+				argsList.remove(0);
+				subCommand.execute(sender, cmd, msg, argsList, args[0]);
+				return;
+			}
+
 			if(this.helpSubCommand != null)
 			{
 				for(String alias : this.helpSubCommand.getAliases())
