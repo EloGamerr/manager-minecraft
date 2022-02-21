@@ -7,8 +7,9 @@ import java.lang.reflect.InvocationTargetException;
 
 public abstract class StaticFileObject extends FileObject
 {
-    private transient FileManager fileManager;
+    transient FileManager fileManager;
     private transient long lastModified;
+    transient File file;
 
     protected static StaticFileObject init(Class<?> commandClass, FileManager fileManager) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         Object object = commandClass.getConstructor().newInstance();
@@ -16,6 +17,7 @@ public abstract class StaticFileObject extends FileObject
         {
             StaticFileObject staticFileObject = (StaticFileObject) object;
             staticFileObject.fileManager = fileManager;
+            staticFileObject.file = new File(staticFileObject.fileManager.getJavaPlugin().getDataFolder(), staticFileObject.getFileName());
             staticFileObject.preLoad();
             staticFileObject.tryLoad();
             staticFileObject.postLoad();
@@ -25,14 +27,11 @@ public abstract class StaticFileObject extends FileObject
         return null;
     }
 
-    private String getFileName() {
+    String getFileName() {
         return this.getClass().getSimpleName().toLowerCase();
     }
 
     protected boolean tryLoad() {
-        String fileName = this.getFileName().endsWith(".json") ? this.getFileName() : this.getFileName()+".json";
-        File file = new File(this.fileManager.getJavaPlugin().getDataFolder(), fileName);
-
         if(this.lastModified == file.lastModified() && file.exists()) return false;
 
         this.load();
@@ -43,9 +42,6 @@ public abstract class StaticFileObject extends FileObject
     @Override
     protected void load()
     {
-        String fileName = this.getFileName().endsWith(".json") ? this.getFileName() : this.getFileName()+".json";
-        File file = new File(this.fileManager.getJavaPlugin().getDataFolder(), fileName);
-
         if(!file.exists())
         {
             this.save();
@@ -53,31 +49,11 @@ public abstract class StaticFileObject extends FileObject
             return;
         }
 
-        Bukkit.getLogger().warning("[" + this.fileManager.getJavaPlugin().getName()+"] Changements dans le fichier " + fileName + " détectés. Chargement des données.");
+        Bukkit.getLogger().warning("[" + this.fileManager.getJavaPlugin().getName()+"] Changements dans le fichier " + getFileName() + " détectés. Chargement des données.");
         this.lastModified = file.lastModified();
 
-        try {
-            FileReader reader = new FileReader(file);
-            this.fileManager.getGson().fromJson(reader, this.getClass());
-            //this.save();
-        }
-        catch(FileNotFoundException ignored)
-        {}
+        this.loadStaticFile();
     }
 
-    @Override
-    public void save()
-    {
-        String fileName = this.getFileName().endsWith(".json") ? this.getFileName() : this.getFileName()+".json";
-        File file = new File(this.fileManager.getJavaPlugin().getDataFolder(), fileName);
-
-        this.fileManager.checkFileIsCreated(file);
-        try {
-            FileWriter writer = new FileWriter(file);
-            this.fileManager.getGson().toJson(this, writer);
-            writer.close();
-        }
-        catch(IOException ignored)
-        {}
-    }
+    abstract void loadStaticFile();
 }

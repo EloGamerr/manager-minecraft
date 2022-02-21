@@ -49,7 +49,7 @@ public class FileManager
                 if(packageFile != null && packageFile.endsWith(".class"))
                 {
                     Class<?> commandClass = Class.forName(packageFile.replaceAll("\\.class", "").replaceAll("/", "."), true, javaPlugin.getClass().getClassLoader());
-                    if(StaticFileObject.class.equals(commandClass.getSuperclass()))
+                    if(isStaticFile(commandClass))
                     {
                         StaticFileObject staticFileObject = StaticFileObject.init(commandClass, this);
                         if(staticFileObject != null) {
@@ -179,5 +179,13 @@ public class FileManager
         }
         ParameterizedType parameterized = (ParameterizedType) superclass;
         return parameterized.getActualTypeArguments()[0];
+    }
+
+    private boolean isStaticFile(Class<?> commandClass) {
+        if (commandClass.getSuperclass() == null)
+            return false;
+
+        return StaticFileObject.class.equals(commandClass.getSuperclass()) ||
+                StaticFileObject.class.equals(commandClass.getSuperclass().getSuperclass());
     }
 }
