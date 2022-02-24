@@ -191,8 +191,16 @@ public abstract class SubCommand
 		return this.argAsInt(index, notify, Integer.MIN_VALUE, false);
 	}
 
+	protected int argAsInt(int index, boolean notify, int min) throws ArgTypeException {
+		return this.argAsInt(index, notify, min, true);
+	}
+
 	protected int argAsInt(int index, boolean notify, int min, boolean hasMin) throws ArgTypeException {
 		return this.argAsInt(index, notify, min, Integer.MAX_VALUE, hasMin, false);
+	}
+
+	protected int argAsInt(int index, boolean notify, int min, int max) throws ArgTypeException {
+		return this.argAsNumber(index, notify, Integer.class, min, max, true, true);
 	}
 
 	protected int argAsInt(int index, boolean notify, int min, int max, boolean hasMin, boolean hasMax) throws ArgTypeException {
@@ -203,8 +211,16 @@ public abstract class SubCommand
 		return this.argAsDouble(index, notify, Double.NEGATIVE_INFINITY, false);
 	}
 
+	protected double argAsDouble(int index, boolean notify, double min) throws ArgTypeException {
+		return this.argAsDouble(index, notify, min, true);
+	}
+
 	protected double argAsDouble(int index, boolean notify, double min, boolean hasMin) throws ArgTypeException {
 		return this.argAsDouble(index, notify, min, Double.POSITIVE_INFINITY, hasMin, false);
+	}
+
+	protected double argAsDouble(int index, boolean notify, double min, double max) throws ArgTypeException {
+		return this.argAsNumber(index, notify, Double.class, min, max, true, true);
 	}
 
 	protected double argAsDouble(int index, boolean notify, double min, double max, boolean hasMin, boolean hasMax) throws ArgTypeException {
@@ -215,8 +231,16 @@ public abstract class SubCommand
 		return this.argAsByte(index, notify, Byte.MIN_VALUE, false);
 	}
 
+	protected byte argAsByte(int index, boolean notify, byte min) throws ArgTypeException {
+		return this.argAsByte(index, notify, min, true);
+	}
+
 	protected byte argAsByte(int index, boolean notify, byte min, boolean hasMin) throws ArgTypeException {
 		return this.argAsByte(index, notify, min, Byte.MAX_VALUE, hasMin, false);
+	}
+
+	protected byte argAsByte(int index, boolean notify, byte min, byte max) throws ArgTypeException {
+		return this.argAsNumber(index, notify, Byte.class, min, max, true, true);
 	}
 
 	protected byte argAsByte(int index, boolean notify, byte min, byte max, boolean hasMin, boolean hasMax) throws ArgTypeException {
@@ -227,8 +251,16 @@ public abstract class SubCommand
 		return this.argAsFloat(index, notify, Float.NEGATIVE_INFINITY, false);
 	}
 
+	protected float argAsFloat(int index, boolean notify, float min) throws ArgTypeException {
+		return this.argAsFloat(index, notify, min, true);
+	}
+
 	protected float argAsFloat(int index, boolean notify, float min, boolean hasMin) throws ArgTypeException {
 		return this.argAsFloat(index, notify, min, Float.POSITIVE_INFINITY, hasMin, false);
+	}
+
+	protected float argAsFloat(int index, boolean notify, float min, float max) throws ArgTypeException {
+		return this.argAsNumber(index, notify, Float.class, min, max, true, true);
 	}
 
 	protected float argAsFloat(int index, boolean notify, float min, float max, boolean hasMin, boolean hasMax) throws ArgTypeException {
@@ -239,8 +271,16 @@ public abstract class SubCommand
 		return this.argAsShort(index, notify, Short.MIN_VALUE, false);
 	}
 
+	protected short argAsShort(int index, boolean notify, short min) throws ArgTypeException {
+		return this.argAsShort(index, notify, min, true);
+	}
+
 	protected short argAsShort(int index, boolean notify, short min, boolean hasMin) throws ArgTypeException {
 		return this.argAsShort(index, notify, min, Short.MAX_VALUE, hasMin, false);
+	}
+
+	protected short argAsShort(int index, boolean notify, short min, short max) throws ArgTypeException {
+		return this.argAsNumber(index, notify, Short.class, min, max, true, true);
 	}
 
 	protected short argAsShort(int index, boolean notify, short min, short max, boolean hasMin, boolean hasMax) throws ArgTypeException {
@@ -251,8 +291,16 @@ public abstract class SubCommand
 		return this.argAsLong(index, notify, Long.MIN_VALUE, false);
 	}
 
+	protected long argAsLong(int index, boolean notify, long min) throws ArgTypeException {
+		return this.argAsLong(index, notify, min, true);
+	}
+
 	protected long argAsLong(int index, boolean notify, long min, boolean hasMin) throws ArgTypeException {
 		return this.argAsLong(index, notify, min, Long.MAX_VALUE, hasMin, false);
+	}
+
+	protected long argAsLong(int index, boolean notify, long min, long max) throws ArgTypeException {
+		return this.argAsNumber(index, notify, Long.class, min, max, true, true);
 	}
 
 	protected long argAsLong(int index, boolean notify, long min, long max, boolean hasMin, boolean hasMax) throws ArgTypeException {
