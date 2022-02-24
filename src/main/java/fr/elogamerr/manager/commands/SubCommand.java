@@ -188,78 +188,78 @@ public abstract class SubCommand
 	}
 
 	protected int argAsInt(int index, boolean notify) throws ArgTypeException {
-		return this.argAsInt(index, notify, Integer.MIN_VALUE);
+		return this.argAsInt(index, notify, Integer.MIN_VALUE, false);
 	}
 
-	protected int argAsInt(int index, boolean notify, int min) throws ArgTypeException {
-		return this.argAsInt(index, notify, min, Integer.MAX_VALUE);
+	protected int argAsInt(int index, boolean notify, int min, boolean hasMin) throws ArgTypeException {
+		return this.argAsInt(index, notify, min, Integer.MAX_VALUE, hasMin, false);
 	}
 
-	protected int argAsInt(int index, boolean notify, int min, int max) throws ArgTypeException {
-		return this.argAsNumber(index, notify, Integer.class, min, max);
+	protected int argAsInt(int index, boolean notify, int min, int max, boolean hasMin, boolean hasMax) throws ArgTypeException {
+		return this.argAsNumber(index, notify, Integer.class, min, max, hasMin, hasMax);
 	}
 
 	protected double argAsDouble(int index, boolean notify) throws ArgTypeException {
-		return this.argAsDouble(index, notify, Double.NEGATIVE_INFINITY);
+		return this.argAsDouble(index, notify, Double.NEGATIVE_INFINITY, false);
 	}
 
-	protected double argAsDouble(int index, boolean notify, double min) throws ArgTypeException {
-		return this.argAsDouble(index, notify, min, Double.POSITIVE_INFINITY);
+	protected double argAsDouble(int index, boolean notify, double min, boolean hasMin) throws ArgTypeException {
+		return this.argAsDouble(index, notify, min, Double.POSITIVE_INFINITY, hasMin, false);
 	}
 
-	protected double argAsDouble(int index, boolean notify, double min, double max) throws ArgTypeException {
-		return this.argAsNumber(index, notify, Double.class, min, max);
+	protected double argAsDouble(int index, boolean notify, double min, double max, boolean hasMin, boolean hasMax) throws ArgTypeException {
+		return this.argAsNumber(index, notify, Double.class, min, max, hasMin, hasMax);
 	}
 
 	protected byte argAsByte(int index, boolean notify) throws ArgTypeException {
-		return this.argAsByte(index, notify, Byte.MIN_VALUE);
+		return this.argAsByte(index, notify, Byte.MIN_VALUE, false);
 	}
 
-	protected byte argAsByte(int index, boolean notify, byte min) throws ArgTypeException {
-		return this.argAsByte(index, notify, min, Byte.MAX_VALUE);
+	protected byte argAsByte(int index, boolean notify, byte min, boolean hasMin) throws ArgTypeException {
+		return this.argAsByte(index, notify, min, Byte.MAX_VALUE, hasMin, false);
 	}
 
-	protected byte argAsByte(int index, boolean notify, byte min, byte max) throws ArgTypeException {
-		return this.argAsNumber(index, notify, Byte.class, min, max);
+	protected byte argAsByte(int index, boolean notify, byte min, byte max, boolean hasMin, boolean hasMax) throws ArgTypeException {
+		return this.argAsNumber(index, notify, Byte.class, min, max, hasMin, hasMax);
 	}
 
 	protected float argAsFloat(int index, boolean notify) throws ArgTypeException {
-		return this.argAsFloat(index, notify, Float.NEGATIVE_INFINITY);
+		return this.argAsFloat(index, notify, Float.NEGATIVE_INFINITY, false);
 	}
 
-	protected float argAsFloat(int index, boolean notify, float min) throws ArgTypeException {
-		return this.argAsFloat(index, notify, min, Float.POSITIVE_INFINITY);
+	protected float argAsFloat(int index, boolean notify, float min, boolean hasMin) throws ArgTypeException {
+		return this.argAsFloat(index, notify, min, Float.POSITIVE_INFINITY, hasMin, false);
 	}
 
-	protected float argAsFloat(int index, boolean notify, float min, float max) throws ArgTypeException {
-		return this.argAsNumber(index, notify, Float.class, min, max);
+	protected float argAsFloat(int index, boolean notify, float min, float max, boolean hasMin, boolean hasMax) throws ArgTypeException {
+		return this.argAsNumber(index, notify, Float.class, min, max, hasMin, hasMax);
 	}
 
 	protected short argAsShort(int index, boolean notify) throws ArgTypeException {
-		return this.argAsShort(index, notify, Short.MIN_VALUE);
+		return this.argAsShort(index, notify, Short.MIN_VALUE, false);
 	}
 
-	protected short argAsShort(int index, boolean notify, short min) throws ArgTypeException {
-		return this.argAsShort(index, notify, min, Short.MAX_VALUE);
+	protected short argAsShort(int index, boolean notify, short min, boolean hasMin) throws ArgTypeException {
+		return this.argAsShort(index, notify, min, Short.MAX_VALUE, hasMin, false);
 	}
 
-	protected short argAsShort(int index, boolean notify, short min, short max) throws ArgTypeException {
-		return this.argAsNumber(index, notify, Short.class, min, max);
+	protected short argAsShort(int index, boolean notify, short min, short max, boolean hasMin, boolean hasMax) throws ArgTypeException {
+		return this.argAsNumber(index, notify, Short.class, min, max, hasMin, hasMax);
 	}
 
 	protected long argAsLong(int index, boolean notify) throws ArgTypeException {
-		return this.argAsLong(index, notify, Long.MIN_VALUE);
+		return this.argAsLong(index, notify, Long.MIN_VALUE, false);
 	}
 
-	protected long argAsLong(int index, boolean notify, long min) throws ArgTypeException {
-		return this.argAsLong(index, notify, min, Long.MAX_VALUE);
+	protected long argAsLong(int index, boolean notify, long min, boolean hasMin) throws ArgTypeException {
+		return this.argAsLong(index, notify, min, Long.MAX_VALUE, hasMin, false);
 	}
 
-	protected long argAsLong(int index, boolean notify, long min, long max) throws ArgTypeException {
-		return this.argAsNumber(index, notify, Long.class, min, max);
+	protected long argAsLong(int index, boolean notify, long min, long max, boolean hasMin, boolean hasMax) throws ArgTypeException {
+		return this.argAsNumber(index, notify, Long.class, min, max, hasMin, hasMax);
 	}
 
-	private <T extends Number> T argAsNumber(int index, boolean notify, Class<T> clazz, T min, T max) throws ArgTypeException {
+	private <T extends Number> T argAsNumber(int index, boolean notify, Class<T> clazz, T min, T max, boolean hasMin, boolean hasMax) throws ArgTypeException {
 		String arg = this.argAsString(index);
 
 		Comparable<T> value;
@@ -284,8 +284,17 @@ public abstract class SubCommand
 			return (T) value;
 		}
 		else {
-			if(notify)
-				this.err("L'argument $!$"+arg+"$e$doit être un nombre compris entre <!>"+min+" <err>et <!>"+max);
+			if(notify) {
+				if (hasMin && hasMin) {
+					this.err("L'argument $!$"+arg+"$e$doit être un nombre compris entre <!>"+min+" <err>et <!>"+max);
+				} else if (hasMin) {
+					this.err("L'argument $!$"+arg+"$e$doit être un nombre supérieur ou égal à <!>"+min);
+				} else if (hasMax) {
+					this.err("L'argument $!$"+arg+"$e$doit être un nombre inférieur ou égal à <!>"+max);
+				} else {
+					this.err("L'argument $!$"+arg+"$e$doit être un nombre");
+				}
+			}
 
 			throw new ArgTypeException(index, arg);
 		}
