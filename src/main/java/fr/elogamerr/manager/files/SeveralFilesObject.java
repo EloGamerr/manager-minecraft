@@ -108,6 +108,8 @@ public abstract class SeveralFilesObject<T extends FileEntity> extends FileObjec
 
     public T get(String id)
     {
+        if (id == null) return null;
+
         return this.idTofileEntities.get(id.toLowerCase());
     }
 
@@ -127,12 +129,12 @@ public abstract class SeveralFilesObject<T extends FileEntity> extends FileObjec
 
     public boolean contains(String id)
     {
-        return this.idTofileEntities.get(id.toLowerCase()) != null;
+        return this.get(id) != null;
     }
 
     public T getOrDefault(String id, T fileEntity)
     {
-        T object = this.idTofileEntities.get(id.toLowerCase());
+        T object = this.get(id);
         if(object == null)
         {
             return fileEntity;
@@ -143,7 +145,7 @@ public abstract class SeveralFilesObject<T extends FileEntity> extends FileObjec
 
     public T getOrDefaultAndCreate(String id, T fileEntity)
     {
-        T object = this.idTofileEntities.get(id.toLowerCase());
+        T object = this.get(id);
         if(object == null)
         {
             this.addOrUpdate(fileEntity);
@@ -217,6 +219,8 @@ public abstract class SeveralFilesObject<T extends FileEntity> extends FileObjec
 
     public void remove(final String id)
     {
+        if (id == null) return;
+
         final FileEntity fileEntity1 = this.getIdToFileEntities().get(id.toLowerCase());
         this.getFileEntities().remove(fileEntity1);
         this.getIdToFileEntities().remove(id.toLowerCase());
