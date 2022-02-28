@@ -334,13 +334,13 @@ public abstract class SubCommand
 		else {
 			if(notify) {
 				if (hasMin && hasMin) {
-					this.err("L'argument $!$"+arg+"$e$doit être un nombre compris entre <!>"+min+" <err>et <!>"+max);
+					this.err("L'argument $!$"+arg+" $e$doit être un nombre compris entre <!>"+min+" <err>et <!>"+max);
 				} else if (hasMin) {
-					this.err("L'argument $!$"+arg+"$e$doit être un nombre supérieur ou égal à <!>"+min);
+					this.err("L'argument $!$"+arg+" $e$doit être un nombre supérieur ou égal à <!>"+min);
 				} else if (hasMax) {
-					this.err("L'argument $!$"+arg+"$e$doit être un nombre inférieur ou égal à <!>"+max);
+					this.err("L'argument $!$"+arg+" $e$doit être un nombre inférieur ou égal à <!>"+max);
 				} else {
-					this.err("L'argument $!$"+arg+"$e$doit être un nombre");
+					this.err("L'argument $!$"+arg+" $e$doit être un nombre");
 				}
 			}
 
