@@ -10,4 +10,8 @@ abstract class FileObject {
     }
 
     protected abstract void save();
+
+    public boolean isPostLoadDelayed() {
+        return false;
+    }
 }

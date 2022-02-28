@@ -19,7 +19,8 @@ public abstract class OneFileObject<T> extends FileObject
             oneFileObject.fileManager = fileManager;
             oneFileObject.preLoad();
             oneFileObject.load();
-            oneFileObject.postLoad();
+            if (!oneFileObject.isPostLoadDelayed())
+                oneFileObject.postLoad();
             return oneFileObject;
         }
 

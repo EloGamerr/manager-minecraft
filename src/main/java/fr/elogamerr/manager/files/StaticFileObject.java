@@ -20,7 +20,8 @@ public abstract class StaticFileObject extends FileObject
             staticFileObject.file = new File(staticFileObject.fileManager.getJavaPlugin().getDataFolder(), staticFileObject.getFileName());
             staticFileObject.preLoad();
             staticFileObject.tryLoad();
-            staticFileObject.postLoad();
+            if (!staticFileObject.isPostLoadDelayed())
+                staticFileObject.postLoad();
             return staticFileObject;
         }
 

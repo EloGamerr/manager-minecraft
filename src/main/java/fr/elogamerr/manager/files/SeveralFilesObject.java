@@ -31,7 +31,8 @@ public abstract class SeveralFilesObject<T extends FileEntity> extends FileObjec
             severalFilesObject.saveThread();
             severalFilesObject.preLoad();
             severalFilesObject.load();
-            severalFilesObject.postLoad();
+            if (!severalFilesObject.isPostLoadDelayed())
+                severalFilesObject.postLoad();
             return severalFilesObject;
         }
         return null;

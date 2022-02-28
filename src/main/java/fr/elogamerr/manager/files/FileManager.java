@@ -14,6 +14,7 @@ import java.net.URL;
 import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -44,6 +45,7 @@ public class FileManager
         try
         {
             ArrayList<String> packageFiles = getPackageContentJar(javaPlugin, filesPackage);
+            List<FileObject> generatedFileObjects = new ArrayList<>();
             for(String packageFile : packageFiles)
             {
                 if(packageFile != null && packageFile.endsWith(".class"))
@@ -53,20 +55,32 @@ public class FileManager
                     {
                         StaticFileObject staticFileObject = StaticFileObject.init(commandClass, this);
                         if(staticFileObject != null) {
+                            generatedFileObjects.add(staticFileObject);
                             staticFileObjectList.put(staticFileObject.getClass(), staticFileObject);
                             this.staticFileObjectList.put(staticFileObject.getClass(), staticFileObject);
                         }
                     }
                     else if(SeveralFilesObject.class.equals(commandClass.getSuperclass()) || SeveralFilesObjectPlayer.class.equals(commandClass.getSuperclass()))
                     {
-                        SeveralFilesObject.init(commandClass, this);
+                        SeveralFilesObject<?> severalFilesObject = SeveralFilesObject.init(commandClass, this);
+                        if (severalFilesObject != null) {
+                            generatedFileObjects.add(severalFilesObject);
+                        }
                     }
                     else if(OneFileObject.class.equals(commandClass.getSuperclass()))
                     {
                         OneFileObject<?> oneFileObject = OneFileObject.init(commandClass, this);
-                        if(oneFileObject != null)
+                        if(oneFileObject != null) {
+                            generatedFileObjects.add(oneFileObject);
                             this.oneFileObjectList.put(oneFileObject.getClass(), oneFileObject);
+                        }
                     }
+                }
+            }
+
+            for (FileObject fileObject : generatedFileObjects) {
+                if (fileObject.isPostLoadDelayed()) {
+                    fileObject.postLoad();
                 }
             }
 
