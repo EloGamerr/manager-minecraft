@@ -5,20 +5,20 @@ import org.bukkit.Location;
 
 import java.util.Objects;
 
-public class FileLocation {
+public class FileBlockLocation {
     private final String world;
-    private final double x;
-    private final double y;
-    private final double z;
+    private final int x;
+    private final int y;
+    private final int z;
 
-    public FileLocation(Location location) {
+    public FileBlockLocation(Location location) {
         this.world = location.getWorld().getName();
-        this.x = location.getX();
-        this.y = location.getY();
-        this.z = location.getZ();
+        this.x = location.getBlockX();
+        this.y = location.getBlockY();
+        this.z = location.getBlockZ();
     }
 
-    public FileLocation(String world, double x, double y, double z) {
+    public FileBlockLocation(String world, int x, int y, int z) {
         this.world = world;
         this.x = x;
         this.y = y;
@@ -29,15 +29,15 @@ public class FileLocation {
         return world;
     }
 
-    public double getX() {
+    public int getX() {
         return x;
     }
 
-    public double getY() {
+    public int getY() {
         return y;
     }
 
-    public double getZ() {
+    public int getZ() {
         return z;
     }
 
@@ -49,8 +49,8 @@ public class FileLocation {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        FileLocation that = (FileLocation) o;
-        return Double.compare(that.x, x) == 0 && Double.compare(that.y, y) == 0 && Double.compare(that.z, z) == 0 && Objects.equals(world, that.world);
+        FileBlockLocation that = (FileBlockLocation) o;
+        return x == that.x && y == that.y && z == that.z && Objects.equals(world, that.world);
     }
 
     @Override
