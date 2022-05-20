@@ -60,7 +60,7 @@ public class FileManager
                             this.staticFileObjectList.put(staticFileObject.getClass(), staticFileObject);
                         }
                     }
-                    else if(SeveralFilesObject.class.equals(commandClass.getSuperclass()) || SeveralFilesObjectPlayer.class.equals(commandClass.getSuperclass()))
+                    else if(SeveralFilesObject.class.equals(commandClass.getSuperclass()) || SeveralFilesObjectPlayer.class.equals(commandClass.getSuperclass()) || SeveralFilesObjectUUID.class.equals(commandClass.getSuperclass()))
                     {
                         SeveralFilesObject<?> severalFilesObject = SeveralFilesObject.init(commandClass, this);
                         if (severalFilesObject != null) {
